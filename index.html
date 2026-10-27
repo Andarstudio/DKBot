@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10131d">
+  <title>DUDEKILL Admin Panel</title>
+  <style>
+    :root{color-scheme:dark;--bg:#10131d;--panel:#191e2c;--line:#30384d;--text:#f4f6ff;--muted:#a8b0c7;--accent:#ff563d;--good:#55d6a3}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top right,#2c2034 0,#10131d 42%);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);min-height:100vh;display:grid;place-items:center;padding:22px}
+    .wrap{width:min(100%,480px)}.brand{font-weight:900;letter-spacing:.12em;font-size:1.5rem;margin-bottom:4px}.brand span{color:var(--accent)}.sub{color:var(--muted);margin:0 0 22px}
+    .card{background:rgba(25,30,44,.96);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 24px 70px #0007}
+    h1{font-size:1.35rem;margin:0 0 6px}p{color:var(--muted);margin-top:0}.field{display:block;margin:14px 0 6px;font-size:.9rem;color:#dce2f4}
+    input{width:100%;padding:13px 14px;border:1px solid #3b4560;border-radius:10px;background:#0f1320;color:var(--text);font:inherit;outline:none}
+    input:focus{border-color:var(--accent);box-shadow:0 0 0 3px #ff563d25}
+    button{width:100%;border:0;border-radius:10px;padding:13px 15px;margin-top:12px;font:700 1rem system-ui;cursor:pointer;background:var(--accent);color:white}
+    button.secondary{background:#252c3d;border:1px solid #3b4560}button:disabled{opacity:.55;cursor:wait}
+    .divider{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.85rem;margin:16px 0}.divider:before,.divider:after{content:"";height:1px;background:var(--line);flex:1}
+    .status{margin-top:14px;padding:11px 12px;border-radius:9px;background:#0f1320;border:1px solid var(--line);font-size:.9rem;overflow-wrap:anywhere}.status.error{border-color:#a64040;color:#ffb4ae}.status.good{border-color:#287c61;color:var(--good)}
+    .hidden{display:none!important}.digits{letter-spacing:.65em;text-align:center;font-size:1.6rem;font-weight:800}.small{font-size:.8rem;color:var(--muted);margin-top:16px}.topline{display:flex;justify-content:space-between;align-items:center;gap:10px}.pill{font-size:.75rem;border:1px solid var(--line);padding:4px 8px;border-radius:99px;color:var(--good)}
+    .dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.tile{background:#111624;border:1px solid var(--line);border-radius:12px;padding:14px}.tile strong{display:block;font-size:1rem}.tile span{font-size:.82rem;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="brand">DUDE<span>KILL</span></div>
+    <p class="sub">Secure administration · Staff access only</p>
+
+    <section id="loginCard" class="card">
+      <h1>Admin sign in</h1>
+      <p>Sign in with your DUDEKILL account, then verify your admin access.</p>
+      <form id="emailForm">
+        <label class="field" for="email">Email</label>
+        <input id="email" type="email" autocomplete="username" required placeholder="you@example.com">
+        <label class="field" for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" required placeholder="Your account password">
+        <button id="emailButton" type="submit">Sign in with email</button>
+      </form>
+      <div class="divider">OR</div>
+      <button id="googleButton" class="secondary" type="button">Continue with Google</button>
+      <div id="loginStatus" class="status" role="status">Firebase settings must be configured before sign-in will work.</div>
+      <div class="small">Your password is handled by Firebase Authentication and is never stored in Firestore or this page.</div>
+    </section>
+
+    <section id="codeCard" class="card hidden">
+      <div class="topline"><h1>Second-step verification</h1><span class="pill">ADMIN CHECK PASSED</span></div>
+      <p id="identityText">Signed in. Enter your 4-digit admin verification code.</p>
+      <form id="codeForm">
+        <label class="field" for="adminCode">4-digit admin code</label>
+        <input id="adminCode" class="digits" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{4}" minlength="4" maxlength="4" required placeholder="••••" aria-label="4-digit admin code">
+        <button id="verifyButton" type="submit">Verify code</button>
+      </form>
+      <button id="cancelCodeButton" class="secondary" type="button">Sign out</button>
+      <div id="codeStatus" class="status" role="status">The code must be verified by your secure backend. It is not stored in this HTML.</div>
+      <div class="small">Use a backend with rate limiting and lockouts. A 4-digit code is weaker than a proper second factor, so never rely on the code alone.</div>
+    </section>
+
+    <section id="dashboardCard" class="card hidden">
+      <div class="topline"><h1>Admin dashboard</h1><span class="pill">VERIFIED SESSION</span></div>
+      <p id="welcomeText">Admin access verified.</p>
+      <div class="dashboard-grid">
+        <div class="tile"><strong>Player management</strong><span>Requires connected admin API</span></div>
+        <div class="tile"><strong>ISH / BS</strong><span>Requires secure backend</span></div>
+        <div class="tile"><strong>Bans</strong><span>Requires secure backend</span></div>
+        <div class="tile"><strong>Game console</strong><span>Not connected yet</span></div>
+      </div>
+      <div id="dashboardStatus" class="status">Authentication is verified. Game actions are not enabled until a trusted backend is configured.</div>
+      <button id="signOutButton" class="secondary" type="button">Sign out</button>
+    </section>
+    <p class="small">DUDEKILL · ANDARSTUDIO. Do not deploy with placeholder Firebase settings.</p>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import {
+      getAuth, signInWithEmailAndPassword, GoogleAuthProvider,
+      signInWithPopup, signOut, onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCyGXvSo-InbaPFR87hUwWUpZMBfB1MrSQ",
+      authDomain: "dudekill.firebaseapp.com",
+      projectId: "dudekill",
+      storageBucket: "dudekill.firebasestorage.app",
+      messagingSenderId: "1039969238108",
+      appId: "1:1039969238108:web:e77ececa57e5b9c37eba99",
+      measurementId: "G-P3K5TWRM9F"
+    };
+
+    // This must be a real HTTPS backend URL, not an API key or secret.
+    // Leave blank until the secure backend endpoint exists.
+    const ADMIN_API_URL = "";
+
+    const $ = (id) => document.getElementById(id);
+    const loginCard = $("loginCard");
+    const codeCard = $("codeCard");
+    const dashboardCard = $("dashboardCard");
+    let auth = null;
+    let db = null;
+    let currentUser = null;
+    let checkingAdmin = false;
+
+    function status(id, message, kind = "") {
+      const el = $(id);
+      el.textContent = message;
+      el.className = "status" + (kind ? " " + kind : "");
+    }
+
+    function show(section) {
+      [loginCard, codeCard, dashboardCard].forEach(el => el.classList.add("hidden"));
+      section.classList.remove("hidden");
+    }
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      status("loginStatus", "Firebase configured. Sign in with your DUDEKILL account.", "good");
+    } catch (error) {
+      console.error("Firebase initialization failed:", error);
+      status("loginStatus", "Firebase initialization failed: " + error.message, "error");
+      $("emailButton").disabled = true;
+      $("googleButton").disabled = true;
+    }
+
+    async function checkAdmin(user) {
+      if (!user || !db || checkingAdmin) return false;
+      checkingAdmin = true;
+      try {
+        const snap = await getDoc(doc(db, "admins", user.uid));
+        console.log("Signed-in UID:", user.uid, "Admin document exists:", snap.exists());
+
+        if (!snap.exists() || snap.data().isAdmin !== true) {
+          await signOut(auth);
+          currentUser = null;
+          show(loginCard);
+          status("loginStatus",
+            "Admin access denied. In Firestore, create admins/" + user.uid +
+            " with Boolean field isAdmin set to true.", "error");
+          return false;
+        }
+
+        currentUser = user;
+        $("identityText").textContent =
+          `Signed in as ${user.email || user.displayName || user.uid}. Enter your 4-digit admin code.`;
+        show(codeCard);
+        status("codeStatus",
+          ADMIN_API_URL
+            ? "Enter your 4-digit admin verification code."
+            : "Firebase admin check passed. Second-step verification is not ready because no secure backend URL is configured.",
+          ADMIN_API_URL ? "" : "error");
+        return true;
+      } catch (error) {
+        console.error("Admin verification error:", error);
+        status("loginStatus",
+          `Admin check failed: ${error.code || "error"} — ${error.message || error}`,
+          "error");
+        return false;
+      } finally {
+        checkingAdmin = false;
+      }
+    }
+
+    $("emailForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!auth) return;
+      $("emailButton").disabled = true;
+      try {
+        const credential = await signInWithEmailAndPassword(
+          auth, $("email").value.trim(), $("password").value
+        );
+        await checkAdmin(credential.user);
+      } catch (error) {
+        status("loginStatus", "Sign-in failed: " + error.message, "error");
+      } finally {
+        $("emailButton").disabled = false;
+      }
+    });
+
+    $("googleButton").addEventListener("click", async () => {
+      if (!auth) return;
+      $("googleButton").disabled = true;
+      try {
+        const credential = await signInWithPopup(auth, new GoogleAuthProvider());
+        await checkAdmin(credential.user);
+      } catch (error) {
+        status("loginStatus", "Google sign-in failed: " + error.message, "error");
+      } finally {
+        $("googleButton").disabled = false;
+      }
+    });
+
+    $("codeForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const code = $("adminCode").value.trim();
+      if (!/^\d{4}$/.test(code)) {
+        status("codeStatus", "Enter exactly four digits.", "error");
+        return;
+      }
+      if (!ADMIN_API_URL) {
+        status("codeStatus",
+          "Backend not configured. The 4-digit code cannot be securely verified until a real HTTPS backend implements POST /verify-admin-code.",
+          "error");
+        return;
+      }
+      if (!currentUser) {
+        status("codeStatus", "Your session has expired. Sign in again.", "error");
+        return;
+      }
+
+      $("verifyButton").disabled = true;
+      try {
+        const idToken = await currentUser.getIdToken();
+        const response = await fetch(`${ADMIN_API_URL.replace(/\/+$/, "")}/verify-admin-code`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${idToken}`
+          },
+          body: JSON.stringify({ code })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || data.verified !== true) {
+          status("codeStatus", data.message || "Code verification failed.", "error");
+          return;
+        }
+        $("welcomeText").textContent =
+          `Welcome, ${currentUser.displayName || currentUser.email || "Admin"}!`;
+        show(dashboardCard);
+      } catch (error) {
+        status("codeStatus", "Could not verify code: " + error.message, "error");
+      } finally {
+        $("verifyButton").disabled = false;
+      }
+    });
+
+    async function doSignOut() {
+      if (auth) await signOut(auth);
+      currentUser = null;
+      $("password").value = "";
+      $("adminCode").value = "";
+      show(loginCard);
+      status("loginStatus", "You have signed out.", "good");
+    }
+
+    $("cancelCodeButton").addEventListener("click", doSignOut);
+    $("signOutButton").addEventListener("click", doSignOut);
+
+    if (auth) {
+      onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+          currentUser = null;
+          show(loginCard);
+          return;
+        }
+        await checkAdmin(user);
+      });
+    }
+  </script>
+</body>
+</html>
