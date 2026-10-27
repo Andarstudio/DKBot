@@ -1,262 +1,910 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#10131d">
-  <title>DUDEKILL Admin Panel</title>
-  <style>
-    :root{color-scheme:dark;--bg:#10131d;--panel:#191e2c;--line:#30384d;--text:#f4f6ff;--muted:#a8b0c7;--accent:#ff563d;--good:#55d6a3}
-    *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top right,#2c2034 0,#10131d 42%);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;color:var(--text);min-height:100vh;display:grid;place-items:center;padding:22px}
-    .wrap{width:min(100%,480px)}.brand{font-weight:900;letter-spacing:.12em;font-size:1.5rem;margin-bottom:4px}.brand span{color:var(--accent)}.sub{color:var(--muted);margin:0 0 22px}
-    .card{background:rgba(25,30,44,.96);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 24px 70px #0007}
-    h1{font-size:1.35rem;margin:0 0 6px}p{color:var(--muted);margin-top:0}.field{display:block;margin:14px 0 6px;font-size:.9rem;color:#dce2f4}
-    input{width:100%;padding:13px 14px;border:1px solid #3b4560;border-radius:10px;background:#0f1320;color:var(--text);font:inherit;outline:none}
-    input:focus{border-color:var(--accent);box-shadow:0 0 0 3px #ff563d25}
-    button{width:100%;border:0;border-radius:10px;padding:13px 15px;margin-top:12px;font:700 1rem system-ui;cursor:pointer;background:var(--accent);color:white}
-    button.secondary{background:#252c3d;border:1px solid #3b4560}button:disabled{opacity:.55;cursor:wait}
-    .divider{display:flex;align-items:center;gap:12px;color:var(--muted);font-size:.85rem;margin:16px 0}.divider:before,.divider:after{content:"";height:1px;background:var(--line);flex:1}
-    .status{margin-top:14px;padding:11px 12px;border-radius:9px;background:#0f1320;border:1px solid var(--line);font-size:.9rem;overflow-wrap:anywhere}.status.error{border-color:#a64040;color:#ffb4ae}.status.good{border-color:#287c61;color:var(--good)}
-    .hidden{display:none!important}.digits{letter-spacing:.65em;text-align:center;font-size:1.6rem;font-weight:800}.small{font-size:.8rem;color:var(--muted);margin-top:16px}.topline{display:flex;justify-content:space-between;align-items:center;gap:10px}.pill{font-size:.75rem;border:1px solid var(--line);padding:4px 8px;border-radius:99px;color:var(--good)}
-    .dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}.tile{background:#111624;border:1px solid var(--line);border-radius:12px;padding:14px}.tile strong{display:block;font-size:1rem}.tile span{font-size:.82rem;color:var(--muted)}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080b0a">
+<title>DUDEKILL | Admin Terminal</title>
+
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #080b0a;
+  --panel: #101512;
+  --line: #26392c;
+  --green: #55ff91;
+  --green-dark: #20b85c;
+  --text: #d8ffe2;
+  --muted: #83a68c;
+  --red: #ff5c68;
+  --yellow: #ffe27a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.6 "Courier New", monospace;
+}
+
+button, input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.wrap {
+  width: min(100% - 28px, 850px);
+  margin: 55px auto;
+}
+
+.brand {
+  font-size: 27px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--green);
+}
+
+.brand span {
+  color: #fff;
+}
+
+.subtitle {
+  color: var(--muted);
+  margin: 3px 0 24px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 0 35px #00ff3710;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 21px;
+  color: var(--green);
+}
+
+p {
+  color: var(--muted);
+}
+
+.field {
+  display: block;
+  margin: 16px 0 6px;
+  color: var(--green);
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  background: #080c09;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--green);
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 8px #55ff9120;
+}
+
+button {
+  padding: 11px 14px;
+  border: 1px solid var(--green-dark);
+  border-radius: 4px;
+  background: #102719;
+  color: var(--green);
+}
+
+button:hover {
+  background: #193b25;
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: wait;
+}
+
+.full {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.secondary {
+  border-color: var(--line);
+  background: #101512;
+}
+
+.divider {
+  text-align: center;
+  color: var(--muted);
+  margin: 18px 0;
+}
+
+.status {
+  margin-top: 14px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  background: #080c09;
+  overflow-wrap: anywhere;
+}
+
+.status.error {
+  color: var(--red);
+  border-color: #78313a;
+}
+
+.status.good {
+  color: var(--green);
+  border-color: var(--green-dark);
+}
+
+.small {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 16px;
+}
+
+.digits {
+  text-align: center;
+  font-size: 24px;
+  letter-spacing: 12px;
+}
+
+/* TERMINAL */
+
+.terminal {
+  overflow: hidden;
+  background: #050806;
+  border: 1px solid #294631;
+  border-radius: 8px;
+  box-shadow: 0 0 40px #00ff3710;
+}
+
+.terminal-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 15px;
+  background: #111914;
+  border-bottom: 1px solid var(--line);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #526457;
+}
+
+.dot.red {
+  background: #ff5c68;
+}
+
+.dot.yellow {
+  background: #ffe27a;
+}
+
+.dot.green {
+  background: #55ff91;
+}
+
+.terminal-title {
+  flex: 1;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.terminal-body {
+  min-height: 400px;
+  max-height: 65vh;
+  overflow-y: auto;
+  padding: 18px;
+  color: var(--green);
+}
+
+.boot {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-bottom: 18px;
+}
+
+.boot .muted {
+  color: var(--muted);
+}
+
+.boot .warning {
+  color: var(--yellow);
+}
+
+.boot .error {
+  color: var(--red);
+}
+
+.terminal-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.prompt {
+  flex-shrink: 0;
+  color: var(--green);
+  font-weight: bold;
+}
+
+#terminalInput {
+  min-width: 0;
+  flex: 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  box-shadow: none;
+  outline: none;
+}
+
+#terminalInput:focus {
+  box-shadow: none;
+}
+
+.output {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin: 8px 0;
+}
+
+.output.error {
+  color: var(--red);
+}
+
+.output.warning {
+  color: var(--yellow);
+}
+
+.output.muted {
+  color: var(--muted);
+}
+
+.terminal-footer {
+  padding: 10px 15px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media(max-width: 480px) {
+  .wrap {
+    margin: 25px auto;
+  }
+
+  .card {
+    padding: 17px;
+  }
+
+  .terminal-body {
+    padding: 12px;
+    min-height: 350px;
+  }
+
+  .brand {
+    font-size: 23px;
+  }
+}
+</style>
 </head>
+
 <body>
-  <main class="wrap">
-    <div class="brand">DUDE<span>KILL</span></div>
-    <p class="sub">Secure administration · Staff access only</p>
+<main class="wrap">
 
-    <section id="loginCard" class="card">
-      <h1>Admin sign in</h1>
-      <p>Sign in with your DUDEKILL account, then verify your admin access.</p>
-      <form id="emailForm">
-        <label class="field" for="email">Email</label>
-        <input id="email" type="email" autocomplete="username" required placeholder="you@example.com">
-        <label class="field" for="password">Password</label>
-        <input id="password" type="password" autocomplete="current-password" required placeholder="Your account password">
-        <button id="emailButton" type="submit">Sign in with email</button>
-      </form>
-      <div class="divider">OR</div>
-      <button id="googleButton" class="secondary" type="button">Continue with Google</button>
-      <div id="loginStatus" class="status" role="status">Firebase settings must be configured before sign-in will work.</div>
-      <div class="small">Your password is handled by Firebase Authentication and is never stored in Firestore or this page.</div>
-    </section>
+  <div class="brand">DUDE<span>KILL</span></div>
+  <div class="subtitle">
+    ANDARSTUDIO / ADMINISTRATION SYSTEM
+  </div>
 
-    <section id="codeCard" class="card hidden">
-      <div class="topline"><h1>Second-step verification</h1><span class="pill">ADMIN CHECK PASSED</span></div>
-      <p id="identityText">Signed in. Enter your 4-digit admin verification code.</p>
-      <form id="codeForm">
-        <label class="field" for="adminCode">4-digit admin code</label>
-        <input id="adminCode" class="digits" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{4}" minlength="4" maxlength="4" required placeholder="••••" aria-label="4-digit admin code">
-        <button id="verifyButton" type="submit">Verify code</button>
-      </form>
-      <button id="cancelCodeButton" class="secondary" type="button">Sign out</button>
-      <div id="codeStatus" class="status" role="status">The code must be verified by your secure backend. It is not stored in this HTML.</div>
-      <div class="small">Use a backend with rate limiting and lockouts. A 4-digit code is weaker than a proper second factor, so never rely on the code alone.</div>
-    </section>
+  <!-- LOGIN SCREEN: KEPT -->
+  <section id="loginCard" class="card">
+    <h1>Admin Authentication</h1>
+    <p>Sign in to access the DUDEKILL administration terminal.</p>
 
-    <section id="dashboardCard" class="card hidden">
-      <div class="topline"><h1>Admin dashboard</h1><span class="pill">VERIFIED SESSION</span></div>
-      <p id="welcomeText">Admin access verified.</p>
-      <div class="dashboard-grid">
-        <div class="tile"><strong>Player management</strong><span>Requires connected admin API</span></div>
-        <div class="tile"><strong>ISH / BS</strong><span>Requires secure backend</span></div>
-        <div class="tile"><strong>Bans</strong><span>Requires secure backend</span></div>
-        <div class="tile"><strong>Game console</strong><span>Not connected yet</span></div>
+    <form id="emailForm">
+      <label class="field" for="email">Email address</label>
+      <input
+        id="email"
+        type="email"
+        autocomplete="username"
+        placeholder="admin@example.com"
+        required
+      >
+
+      <label class="field" for="password">Password</label>
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Password"
+        required
+      >
+
+      <button id="emailButton" class="full" type="submit">
+        [ LOGIN ]
+      </button>
+    </form>
+
+    <div class="divider">OR</div>
+
+    <button id="googleButton" class="full secondary" type="button">
+      [ LOGIN WITH GOOGLE ]
+    </button>
+
+    <div id="loginStatus" class="status">
+      Initializing Firebase...
+    </div>
+
+    <div class="small">
+      Authorized staff only. All permissions are checked against
+      Firebase before terminal access is granted.
+    </div>
+  </section>
+
+  <!-- SECOND-STEP VERIFICATION -->
+  <section id="codeCard" class="card hidden">
+    <h1>Second-Step Verification</h1>
+
+    <p id="identityText">Confirm your administrator identity.</p>
+
+    <form id="codeForm">
+      <label class="field" for="adminCode">
+        Four-digit verification code
+      </label>
+
+      <input
+        id="adminCode"
+        class="digits"
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        pattern="[0-9]{4}"
+        maxlength="4"
+        minlength="4"
+        placeholder="••••"
+        required
+      >
+
+      <button id="verifyButton" class="full" type="submit">
+        [ VERIFY ]
+      </button>
+    </form>
+
+    <button id="cancelCodeButton" class="full secondary" type="button">
+      [ SIGN OUT ]
+    </button>
+
+    <div id="codeStatus" class="status">
+      Waiting for secure verification.
+    </div>
+  </section>
+
+  <!-- LINUX-STYLE ADMIN TERMINAL -->
+  <section id="terminalCard" class="terminal hidden">
+
+    <div class="terminal-top">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+
+      <div class="terminal-title">
+        dudekill-admin — bash
       </div>
-      <div id="dashboardStatus" class="status">Authentication is verified. Game actions are not enabled until a trusted backend is configured.</div>
-      <button id="signOutButton" class="secondary" type="button">Sign out</button>
-    </section>
-    <p class="small">DUDEKILL · ANDARSTUDIO. Do not deploy with placeholder Firebase settings.</p>
-  </main>
+    </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import {
-      getAuth, signInWithEmailAndPassword, GoogleAuthProvider,
-      signInWithPopup, signOut, onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+    <div id="terminalBody" class="terminal-body">
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCyGXvSo-InbaPFR87hUwWUpZMBfB1MrSQ",
-      authDomain: "dudekill.firebaseapp.com",
-      projectId: "dudekill",
-      storageBucket: "dudekill.firebasestorage.app",
-      messagingSenderId: "1039969238108",
-      appId: "1:1039969238108:web:e77ececa57e5b9c37eba99",
-      measurementId: "G-P3K5TWRM9F"
-    };
+      <div class="boot">DUDEKILL ADMIN TERMINAL
+Copyright (c) ANDARSTUDIO
 
-    // This must be a real HTTPS backend URL, not an API key or secret.
-    // Leave blank until the secure backend endpoint exists.
-    const ADMIN_API_URL = "";
+<span class="muted">Initializing administration environment...</span>
+<span class="muted">Authentication: VERIFIED</span>
+<span class="muted">Permission check: PASSED</span>
 
-    const $ = (id) => document.getElementById(id);
-    const loginCard = $("loginCard");
-    const codeCard = $("codeCard");
-    const dashboardCard = $("dashboardCard");
-    let auth = null;
-    let db = null;
-    let currentUser = null;
-    let checkingAdmin = false;
+Welcome to DUDEKILL.
+Type <strong>help</strong> to list available commands.</div>
 
-    function status(id, message, kind = "") {
-      const el = $(id);
-      el.textContent = message;
-      el.className = "status" + (kind ? " " + kind : "");
-    }
+      <div id="terminalOutput"></div>
 
-    function show(section) {
-      [loginCard, codeCard, dashboardCard].forEach(el => el.classList.add("hidden"));
-      section.classList.remove("hidden");
-    }
+      <form id="terminalForm" class="terminal-line">
+        <span class="prompt">DudeKill:/Help$</span>
+        <input
+          id="terminalInput"
+          type="text"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          aria-label="Terminal command"
+          autofocus
+        >
+      </form>
+    </div>
 
-    try {
-      const app = initializeApp(firebaseConfig);
-      auth = getAuth(app);
-      db = getFirestore(app);
-      status("loginStatus", "Firebase configured. Sign in with your DUDEKILL account.", "good");
-    } catch (error) {
-      console.error("Firebase initialization failed:", error);
-      status("loginStatus", "Firebase initialization failed: " + error.message, "error");
-      $("emailButton").disabled = true;
-      $("googleButton").disabled = true;
-    }
+    <div class="terminal-footer">
+      <span>DUDEKILL ADMIN</span>
+      <span id="terminalClock">SYSTEM READY</span>
+    </div>
 
-    async function checkAdmin(user) {
-      if (!user || !db || checkingAdmin) return false;
-      checkingAdmin = true;
-      try {
-        const snap = await getDoc(doc(db, "admins", user.uid));
-        console.log("Signed-in UID:", user.uid, "Admin document exists:", snap.exists());
+  </section>
 
-        if (!snap.exists() || snap.data().isAdmin !== true) {
-          await signOut(auth);
-          currentUser = null;
-          show(loginCard);
-          status("loginStatus",
-            "Admin access denied. In Firestore, create admins/" + user.uid +
-            " with Boolean field isAdmin set to true.", "error");
-          return false;
-        }
+  <div class="small">
+    DUDEKILL · ANDARSTUDIO · Create it. Publish it. Earn it.
+  </div>
 
-        currentUser = user;
-        $("identityText").textContent =
-          `Signed in as ${user.email || user.displayName || user.uid}. Enter your 4-digit admin code.`;
-        show(codeCard);
-        status("codeStatus",
-          ADMIN_API_URL
-            ? "Enter your 4-digit admin verification code."
-            : "Firebase admin check passed. Second-step verification is not ready because no secure backend URL is configured.",
-          ADMIN_API_URL ? "" : "error");
-        return true;
-      } catch (error) {
-        console.error("Admin verification error:", error);
-        status("loginStatus",
-          `Admin check failed: ${error.code || "error"} — ${error.message || error}`,
-          "error");
-        return false;
-      } finally {
-        checkingAdmin = false;
-      }
-    }
+</main>
 
-    $("emailForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      if (!auth) return;
-      $("emailButton").disabled = true;
-      try {
-        const credential = await signInWithEmailAndPassword(
-          auth, $("email").value.trim(), $("password").value
-        );
-        await checkAdmin(credential.user);
-      } catch (error) {
-        status("loginStatus", "Sign-in failed: " + error.message, "error");
-      } finally {
-        $("emailButton").disabled = false;
-      }
-    });
+<script type="module">
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 
-    $("googleButton").addEventListener("click", async () => {
-      if (!auth) return;
-      $("googleButton").disabled = true;
-      try {
-        const credential = await signInWithPopup(auth, new GoogleAuthProvider());
-        await checkAdmin(credential.user);
-      } catch (error) {
-        status("loginStatus", "Google sign-in failed: " + error.message, "error");
-      } finally {
-        $("googleButton").disabled = false;
-      }
-    });
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
 
-    $("codeForm").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const code = $("adminCode").value.trim();
-      if (!/^\d{4}$/.test(code)) {
-        status("codeStatus", "Enter exactly four digits.", "error");
-        return;
-      }
-      if (!ADMIN_API_URL) {
-        status("codeStatus",
-          "Backend not configured. The 4-digit code cannot be securely verified until a real HTTPS backend implements POST /verify-admin-code.",
-          "error");
-        return;
-      }
-      if (!currentUser) {
-        status("codeStatus", "Your session has expired. Sign in again.", "error");
-        return;
-      }
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
 
-      $("verifyButton").disabled = true;
-      try {
-        const idToken = await currentUser.getIdToken();
-        const response = await fetch(`${ADMIN_API_URL.replace(/\/+$/, "")}/verify-admin-code`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${idToken}`
-          },
-          body: JSON.stringify({ code })
-        });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok || data.verified !== true) {
-          status("codeStatus", data.message || "Code verification failed.", "error");
-          return;
-        }
-        $("welcomeText").textContent =
-          `Welcome, ${currentUser.displayName || currentUser.email || "Admin"}!`;
-        show(dashboardCard);
-      } catch (error) {
-        status("codeStatus", "Could not verify code: " + error.message, "error");
-      } finally {
-        $("verifyButton").disabled = false;
-      }
-    });
 
-    async function doSignOut() {
-      if (auth) await signOut(auth);
+const firebaseConfig = {
+  apiKey: "AIzaSyCyGXvSo-InbaPFR87hUwWUpZMBfB1MrSQ",
+  authDomain: "dudekill.firebaseapp.com",
+  projectId: "dudekill",
+  storageBucket: "dudekill.firebasestorage.app",
+  messagingSenderId: "1039969238108",
+  appId: "1:1039969238108:web:e77ececa57e5b9c37eba99",
+  measurementId: "G-P3K5TWRM9F"
+};
+
+// Must be a real HTTPS backend URL.
+// Leave empty until the backend has been implemented.
+const ADMIN_API_URL = "";
+
+const $ = id => document.getElementById(id);
+
+const loginCard = $("loginCard");
+const codeCard = $("codeCard");
+const terminalCard = $("terminalCard");
+
+let auth;
+let db;
+let currentUser = null;
+let checkingAdmin = false;
+
+
+function setStatus(id, message, type = "") {
+  const element = $(id);
+  element.textContent = message;
+  element.className = "status" + (type ? " " + type : "");
+}
+
+
+function showCard(card) {
+  [loginCard, codeCard, terminalCard].forEach(element => {
+    element.classList.add("hidden");
+  });
+
+  card.classList.remove("hidden");
+}
+
+
+function output(text, type = "") {
+  const line = document.createElement("div");
+  line.className = "output" + (type ? " " + type : "");
+  line.textContent = text;
+
+  $("terminalOutput").appendChild(line);
+
+  $("terminalBody").scrollTop =
+    $("terminalBody").scrollHeight;
+}
+
+
+function clearTerminal() {
+  $("terminalOutput").replaceChildren();
+}
+
+
+function printHelp() {
+  output("DUDEKILL TERMINAL — AVAILABLE COMMANDS");
+  output("");
+  output("help              Display this help menu");
+  output("clear             Clear terminal output");
+  output("whoami            Show signed-in administrator");
+  output("status            Show authentication and backend status");
+  output("version           Display terminal version");
+  output("date              Display current date and time");
+  output("players           Player API status");
+  output("bans              Ban system status");
+  output("economy           ISH / BS system status");
+  output("console           Game console status");
+  output("logout            Sign out of the admin panel");
+  output("");
+  output("Commands that modify players or game data require a");
+  output("secure backend and appropriate server-side authorization.");
+}
+
+
+function executeCommand(raw) {
+  const command = raw.trim().toLowerCase();
+
+  if (!command) return;
+
+  output("DudeKill:/Help$ " + raw);
+
+  switch (command) {
+    case "help":
+      printHelp();
+      break;
+
+    case "clear":
+      clearTerminal();
+      break;
+
+    case "whoami":
+      output(
+        currentUser
+          ? "Authenticated as: " +
+              (currentUser.email || currentUser.uid)
+          : "No authenticated user.",
+        currentUser ? "" : "error"
+      );
+      break;
+
+    case "status":
+      output("Firebase authentication: " +
+        (currentUser ? "SIGNED IN" : "SIGNED OUT"));
+
+      output("Admin permission: " +
+        (currentUser ? "CHECKED" : "NOT CHECKED"));
+
+      output("Admin backend: " +
+        (ADMIN_API_URL ? "CONFIGURED" : "NOT CONFIGURED"),
+        ADMIN_API_URL ? "" : "warning"
+      );
+      break;
+
+    case "version":
+      output("DUDEKILL Admin Terminal v1.0.0");
+      output("Environment: GitHub Pages / Browser");
+      break;
+
+    case "date":
+      output(new Date().toString());
+      break;
+
+    case "players":
+      output("Player API is not connected.", "warning");
+      output("No player data was requested or modified.", "muted");
+      break;
+
+    case "bans":
+      output("Ban management API is not connected.", "warning");
+      break;
+
+    case "economy":
+      output("ISH / BS economy API is not connected.", "warning");
+      break;
+
+    case "console":
+      output("Remote game console is not connected.", "warning");
+      break;
+
+    case "logout":
+      logout();
+      break;
+
+    default:
+      output("Command not found: " + raw, "error");
+      output("Type 'help' to see available commands.", "muted");
+  }
+}
+
+
+async function checkAdmin(user) {
+  if (!user || checkingAdmin) return;
+
+  checkingAdmin = true;
+
+  try {
+    setStatus("loginStatus", "Checking admin permissions...");
+
+    const ref = doc(db, "admins", user.uid);
+    const snapshot = await getDoc(ref);
+
+    if (!snapshot.exists() || snapshot.data().isAdmin !== true) {
+      await signOut(auth);
+
       currentUser = null;
-      $("password").value = "";
-      $("adminCode").value = "";
-      show(loginCard);
-      status("loginStatus", "You have signed out.", "good");
+      showCard(loginCard);
+
+      setStatus(
+        "loginStatus",
+        "Access denied. Verify admins/" + user.uid +
+        " and Boolean isAdmin: true.",
+        "error"
+      );
+
+      return;
     }
 
-    $("cancelCodeButton").addEventListener("click", doSignOut);
-    $("signOutButton").addEventListener("click", doSignOut);
+    currentUser = user;
 
-    if (auth) {
-      onAuthStateChanged(auth, async (user) => {
-        if (!user) {
-          currentUser = null;
-          show(loginCard);
-          return;
-        }
-        await checkAdmin(user);
-      });
+    $("identityText").textContent =
+      "Signed in as " + (user.email || user.uid);
+
+    showCard(codeCard);
+
+    if (!ADMIN_API_URL) {
+      setStatus(
+        "codeStatus",
+        "Firebase admin check passed. Secure code verification requires a backend URL.",
+        "error"
+      );
     }
-  </script>
+
+  } catch (error) {
+    console.error(error);
+
+    setStatus(
+      "loginStatus",
+      "Admin check failed: " +
+      (error.code || "error") + " — " + error.message,
+      "error"
+    );
+
+  } finally {
+    checkingAdmin = false;
+  }
+}
+
+
+async function loginWithEmail(event) {
+  event.preventDefault();
+
+  $("emailButton").disabled = true;
+  setStatus("loginStatus", "Signing in...");
+
+  try {
+    const result = await signInWithEmailAndPassword(
+      auth,
+      $("email").value.trim(),
+      $("password").value
+    );
+
+    await checkAdmin(result.user);
+
+  } catch (error) {
+    setStatus(
+      "loginStatus",
+      "Login failed: " + (error.code || "error") +
+      " — " + error.message,
+      "error"
+    );
+
+  } finally {
+    $("emailButton").disabled = false;
+  }
+}
+
+
+async function loginWithGoogle() {
+  $("googleButton").disabled = true;
+  setStatus("loginStatus", "Opening Google sign-in...");
+
+  try {
+    const result = await signInWithPopup(
+      auth,
+      new GoogleAuthProvider()
+    );
+
+    await checkAdmin(result.user);
+
+  } catch (error) {
+    setStatus(
+      "loginStatus",
+      "Google login failed: " +
+      (error.code || "error") + " — " + error.message,
+      "error"
+    );
+
+  } finally {
+    $("googleButton").disabled = false;
+  }
+}
+
+
+async function verifyCode(event) {
+  event.preventDefault();
+
+  const code = $("adminCode").value.trim();
+
+  if (!/^[0-9]{4}$/.test(code)) {
+    setStatus("codeStatus", "Enter exactly four digits.", "error");
+    return;
+  }
+
+  if (!ADMIN_API_URL) {
+    setStatus(
+      "codeStatus",
+      "Backend not configured. The code cannot be verified yet. No code was accepted.",
+      "error"
+    );
+    return;
+  }
+
+  if (!currentUser) {
+    setStatus("codeStatus", "Sign in again.", "error");
+    return;
+  }
+
+  $("verifyButton").disabled = true;
+
+  try {
+    const token = await currentUser.getIdToken();
+
+    const response = await fetch(
+      ADMIN_API_URL.replace(/\/+$/, "") + "/verify-admin-code",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ code })
+      }
+    );
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || result.verified !== true) {
+      setStatus(
+        "codeStatus",
+        result.message || "Verification failed.",
+        "error"
+      );
+      return;
+    }
+
+    showCard(terminalCard);
+    $("terminalInput").focus();
+
+  } catch (error) {
+    setStatus(
+      "codeStatus",
+      "Verification failed: " + error.message,
+      "error"
+    );
+
+  } finally {
+    $("verifyButton").disabled = false;
+  }
+}
+
+
+async function logout() {
+  try {
+    await signOut(auth);
+
+    currentUser = null;
+    $("password").value = "";
+    $("adminCode").value = "";
+
+    showCard(loginCard);
+
+    setStatus(
+      "loginStatus",
+      "Signed out successfully.",
+      "good"
+    );
+
+  } catch (error) {
+    setStatus(
+      "loginStatus",
+      "Sign-out failed: " + error.message,
+      "error"
+    );
+  }
+}
+
+
+// INITIALIZATION
+try {
+  const app = initializeApp(firebaseConfig);
+
+  auth = getAuth(app);
+  db = getFirestore(app);
+
+  setStatus(
+    "loginStatus",
+    "Firebase initialized. Sign in to continue.",
+    "good"
+  );
+
+} catch (error) {
+  console.error(error);
+
+  setStatus(
+    "loginStatus",
+    "Firebase initialization failed: " + error.message,
+    "error"
+  );
+
+  $("emailButton").disabled = true;
+  $("googleButton").disabled = true;
+}
+
+
+$("emailForm").addEventListener("submit", loginWithEmail);
+$("googleButton").addEventListener("click", loginWithGoogle);
+$("codeForm").addEventListener("submit", verifyCode);
+
+$("cancelCodeButton").addEventListener("click", logout);
+
+$("terminalForm").addEventListener("submit", event => {
+  event.preventDefault();
+
+  const input = $("terminalInput");
+  const command = input.value;
+
+  input.value = "";
+  executeCommand(command);
+});
+
+
+$("terminalBody").addEventListener("click", () => {
+  $("terminalInput").focus();
+});
+
+
+$("terminalClock").textContent =
+  new Date().toLocaleString();
+
+
+setInterval(() => {
+  $("terminalClock").textContent =
+    new Date().toLocaleTimeString();
+}, 1000);
+
+
+// Display errors instead of silently failing if Firebase is unreachable.
+window.addEventListener("unhandledrejection", event => {
+  console.error("Unhandled error:", event.reason);
+});
+</script>
+
 </body>
-</html>
+  </html>
